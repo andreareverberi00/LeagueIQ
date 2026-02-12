@@ -151,14 +151,14 @@ export default function Home() {
     setTimeout(() => {
       setFeedback('');
       setIsWrong(false);
-    }, 3200);
+    }, 1500);
   };
 
   const shareTextOptions = [
-    `Ragazzi ho fatto il test LoL IQ: ${score}/10 (${rankData.rank}). Il verdetto ufficiale è che faccio cagare e devo disinstallare. Qualcuno offre coaching?`,
-    `Update tragicomico: LoL IQ Test -> ${score}/10, rank ${rankData.rank}. Mi hanno detto di smettere di shotcallare e toccare erba.`,
-    `Breaking news: ho preso ${score}/10 al LoL IQ Test e ora il mio team vuole farmi pagare i danni emotivi.`,
-    `Ho appena fatto ${score}/10 (${rankData.rank}) al test. Se vedete un drake free e io sono top, confiscatemi mouse e tastiera.`
+    `Guys, I took the LoL IQ Test: ${score}/10 (${rankData.rank}). The official verdict is that I'm trash and should uninstall. Anyone offering coaching?`,
+    `Tragicomic update: LoL IQ Test -> ${score}/10, rank ${rankData.rank}. They told me to stop shotcalling and touch grass.`,
+    `Breaking news: I scored ${score}/10 on the LoL IQ Test and now my team wants me to pay for emotional damages.`,
+    `I just scored ${score}/10 (${rankData.rank}) on the test. If you see a free drake and I'm top, confiscate my mouse and keyboard.`
   ];
 
   const handleShare = async () => {
@@ -166,9 +166,9 @@ export default function Home() {
 
     try {
       await navigator.clipboard.writeText(trollMessage);
-      setShareStatus('✅ Hai copiato il recap troll negli appunti. Ora spamma la chat del team.');
+      setShareStatus('✅ You copied the troll recap to your clipboard. Now spam your team chat.');
     } catch {
-      setShareStatus('❌ Clipboard bloccata. Copia manuale: ' + trollMessage);
+      setShareStatus('❌ Clipboard blocked. Manual copy: ' + trollMessage);
     }
   };
 
