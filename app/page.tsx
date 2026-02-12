@@ -72,8 +72,26 @@ const questions: Question[] = [
   }
 ];
 
-const correctFeedback = ['OK, maybe you have a brain.', 'gj, not completely useless.', 'Rare human behavior detected.'];
-const wrongFeedback = ['Wrong. This is why you’re hardstuck.', 'Porcod*o, come to the damn drake.', 'You are not a real person.'];
+const correctFeedback = [
+  'OK, maybe you have a brain.',
+  'gj, not completely useless.',
+  'Rare human behavior detected.',
+  'Clean macro. Someone clip this.',
+  'Disgusting. You actually used your minimap.',
+  'That was legal and intelligent. Suspicious.',
+  'Coach diff. Keep cooking.',
+  'Finally, a playable teammate.'
+];
+const wrongFeedback = [
+  'Wrong. This is why you’re hardstuck.',
+  'Porcod*o, come to the damn drake.',
+  'You are not a real person.',
+  'Macro criminal behavior detected.',
+  'Did you play with monitor off?',
+  'This click lowered team MMR globally.',
+  'Enemy support is now shotcalling better than you.',
+  'You heard a ping and chose violence instead.'
+];
 
 const rankMap = [
   { max: 3, rank: 'IRON BRAIN', message: 'Uninstall and find a new hobby.' },
@@ -90,6 +108,8 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<string>('');
   const [isWrong, setIsWrong] = useState(false);
+  const [isAnswerLocked, setIsAnswerLocked] = useState(false);
+  const [shareStatus, setShareStatus] = useState('');
 
   const current = questions[index];
   const progress = ((index + (stage === 'result' ? 1 : 0)) / questions.length) * 100;
@@ -100,28 +120,57 @@ export default function Home() {
     setIndex(0);
     setScore(0);
     setFeedback('');
+    setIsWrong(false);
+    setIsAnswerLocked(false);
+    setShareStatus('');
   };
 
   const handleAnswer = (option: string) => {
+    if (isAnswerLocked) {
+      return;
+    }
+
+    setIsAnswerLocked(true);
     const correct = option === current.correct;
     setIsWrong(!correct);
     setFeedback(correct ? randomLine(correctFeedback) : randomLine(wrongFeedback));
+
     if (correct) {
       setScore((prev) => prev + 1);
     }
 
     setTimeout(() => {
-      setFeedback('');
-      setIsWrong(false);
       if (index === questions.length - 1) {
         setStage('result');
       } else {
         setIndex((prev) => prev + 1);
       }
-    }, 900);
+      setIsAnswerLocked(false);
+    }, 950);
+
+    setTimeout(() => {
+      setFeedback('');
+      setIsWrong(false);
+    }, 3200);
   };
 
-  const shareText = `I scored ${score}/10 on the LoL IQ Test and got ${rankData.rank}. Are you actually human?`;
+  const shareTextOptions = [
+    `Ragazzi ho fatto il test LoL IQ: ${score}/10 (${rankData.rank}). Il verdetto ufficiale è che faccio cagare e devo disinstallare. Qualcuno offre coaching?`,
+    `Update tragicomico: LoL IQ Test -> ${score}/10, rank ${rankData.rank}. Mi hanno detto di smettere di shotcallare e toccare erba.`,
+    `Breaking news: ho preso ${score}/10 al LoL IQ Test e ora il mio team vuole farmi pagare i danni emotivi.`,
+    `Ho appena fatto ${score}/10 (${rankData.rank}) al test. Se vedete un drake free e io sono top, confiscatemi mouse e tastiera.`
+  ];
+
+  const handleShare = async () => {
+    const trollMessage = randomLine(shareTextOptions);
+
+    try {
+      await navigator.clipboard.writeText(trollMessage);
+      setShareStatus('✅ Hai copiato il recap troll negli appunti. Ora spamma la chat del team.');
+    } catch {
+      setShareStatus('❌ Clipboard bloccata. Copia manuale: ' + trollMessage);
+    }
+  };
 
   return (
     <main className="min-h-screen px-4 py-8 md:px-8">
@@ -161,7 +210,8 @@ export default function Home() {
                 <button
                   key={option}
                   onClick={() => handleAnswer(option)}
-                  className="rounded-xl border border-white/20 bg-white/5 p-4 text-left text-base transition hover:border-neonBlue/60 hover:bg-neonBlue/10 hover:shadow-glowBlue"
+                  disabled={isAnswerLocked}
+                  className="rounded-xl border border-white/20 bg-white/5 p-4 text-left text-base transition hover:border-neonBlue/60 hover:bg-neonBlue/10 hover:shadow-glowBlue disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {option}
                 </button>
@@ -191,12 +241,13 @@ export default function Home() {
                 Run It Back
               </button>
               <button
-                onClick={() => navigator.clipboard.writeText(shareText)}
+                onClick={handleShare}
                 className="rounded-xl border border-neonPurple/60 bg-neonPurple/10 px-6 py-3 font-semibold text-neonPurple transition hover:bg-neonPurple/20 hover:shadow-glowPurple"
               >
                 Share your LoL IQ
               </button>
             </div>
+            {shareStatus && <p className="mt-4 text-sm text-white/80">{shareStatus}</p>}
           </section>
         )}
       </div>
