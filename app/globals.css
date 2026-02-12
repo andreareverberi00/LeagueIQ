@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-void text-white antialiased;
+  background-image: radial-gradient(circle at 20% 10%, rgba(66, 233, 255, 0.12), transparent 32%),
+    radial-gradient(circle at 80% 0%, rgba(169, 112, 255, 0.14), transparent 35%),
+    radial-gradient(circle at 50% 100%, rgba(255, 77, 109, 0.12), transparent 30%);
+}
+
+.quiz-card {
+  backdrop-filter: blur(8px);
+  background: linear-gradient(165deg, rgba(10, 14, 25, 0.9), rgba(17, 21, 37, 0.85));
+}
